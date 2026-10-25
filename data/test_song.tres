@@ -8,25 +8,23 @@
 [sub_resource type="Resource" id="GestureEvent_1"]
 script = ExtResource("1_xc8ed")
 time_sec = 3.0
-window_sec = 0.4
 metadata/_custom_type_script = "uid://i52vn2xyu70c"
 
 [sub_resource type="Resource" id="GestureEvent_2"]
 script = ExtResource("1_xc8ed")
 time_sec = 8.0
-window_sec = 0.4
 gesture = "PALM"
 metadata/_custom_type_script = "uid://i52vn2xyu70c"
 
 [sub_resource type="Resource" id="TempoMarker_1"]
 script = ExtResource("3_66esq")
-bpm = 70.0
+bpm = 180.0
 metadata/_custom_type_script = "uid://u3dkxknc6uwr"
 
 [sub_resource type="Resource" id="TempoMarker_2"]
 script = ExtResource("3_66esq")
 time_sec = 15.0
-bpm = 50.0
+bpm = 180.0
 metadata/_custom_type_script = "uid://u3dkxknc6uwr"
 
 [resource]

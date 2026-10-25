@@ -7,7 +7,6 @@
 [node name="ConductorMode" type="Node2D" unique_id=1343638301]
 script = ExtResource("1_j1hob")
 song = ExtResource("2_v0hnl")
-mouse_sensitivity = 4.0
 
 [node name="Orchestra" type="Node2D" parent="." unique_id=1393122656]
 

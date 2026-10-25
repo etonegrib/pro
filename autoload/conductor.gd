@@ -4,31 +4,16 @@ var audio_player: AudioStreamPlayer
 var current_song: SongData
 var song_position: float = 0.0
 var is_playing: bool = false
+var _skip_pos_update: bool = false
 
-# Переменные для изменения темпа без изменения тона
-var pitch_shift_effect: AudioEffectPitchShift
-var base_pitch_scale: float = 1.0 # 1.0 = оригинальная скорость
+# Плавная смена скорости
+var _current_scale: float = 1.0
+var _target_scale: float = 1.0
 
 func _ready() -> void:
 	audio_player = AudioStreamPlayer.new()
-	# Отправляем звук в нашу специальную шину Music
-	audio_player.bus = "Music" 
+	audio_player.bus = "Music"
 	add_child(audio_player)
-	
-	# Ищем эффект PitchShift на шине Music
-	var bus_idx := AudioServer.get_bus_index("Music")
-	if bus_idx == -1:
-		push_error("Шина 'Music' не найдена! Проверь панель Аудио.")
-		return
-		
-	for i in AudioServer.get_bus_effect_count(bus_idx):
-		var effect := AudioServer.get_bus_effect(bus_idx, i)
-		if effect is AudioEffectPitchShift:
-			pitch_shift_effect = effect
-			break
-			
-	if pitch_shift_effect == null:
-		push_warning("Эффект PitchShift не найден на шине 'Music'. Смена темпа без тона не сработает.")
 
 func play_song(song: SongData, from_sec: float = 0.0) -> void:
 	current_song = song
@@ -37,8 +22,9 @@ func play_song(song: SongData, from_sec: float = 0.0) -> void:
 	for g in song.gestures:
 		g.processed = false
 		
-	# Сбрасываем темп на оригинальный при старте
-	set_tempo_scale(1.0) 
+	_current_scale = 1.0
+	_target_scale = 1.0
+	audio_player.pitch_scale = 1.0
 	
 	audio_player.play(from_sec)
 	song_position = from_sec
@@ -49,15 +35,16 @@ func stop() -> void:
 	is_playing = false
 
 func seek_to(t: float) -> void:
-	# При откате мы не сбрасываем pitch_scale, 
-	# чтобы игрок продолжал слышать музыку в том же темпе
 	audio_player.play(max(0.0, t))
 	song_position = t
+	_skip_pos_update = true
 
 func _physics_process(_delta: float) -> void:
 	if not is_playing or not audio_player.playing:
 		return
-	# Точная позиция в треке (в секундах)
+	if _skip_pos_update:
+		_skip_pos_update = false
+		return
 	song_position = audio_player.get_playback_position() \
 		+ AudioServer.get_time_since_last_mix() \
 		- AudioServer.get_output_latency()
@@ -67,18 +54,13 @@ func get_current_bpm() -> float:
 		return 120.0
 	return current_song.get_bpm_at(song_position)
 
-# ==========================================
-# НОВАЯ ФУНКЦИЯ: Изменение темпа без тона
-# ==========================================
-# scale = 1.0 (оригинал)
-# scale = 1.2 (на 20% быстрее)
-# scale = 0.8 (на 20% медленнее)
 func set_tempo_scale(scale: float) -> void:
-	if pitch_shift_effect == null:
+	_target_scale = clampf(scale, 0.5, 2.0)
+
+func _process(delta: float) -> void:
+	if not is_playing:
 		return
-		
-	# 1. Меняем скорость воспроизведения (вместе с этим меняется и тон)
-	audio_player.pitch_scale = base_pitch_scale * scale
+	_current_scale = lerp(_current_scale, _target_scale, 5.0 * delta)
 	
-	# 2. Компенсируем изменение тона обратным значением
-	pitch_shift_effect.pitch_scale = 1.0 / scale
+	# ТОЛЬКО МЕНЯЕМ СКОРОСТЬ (Тон поедет вместе с ней - это чисто и без искажений)
+	audio_player.pitch_scale = _current_scale
