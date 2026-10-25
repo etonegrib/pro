@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="SongData" format=3 uid="uid://dvo1k53c4hta5"]
+
+[ext_resource type="AudioStream" uid="uid://csf3xftwha1nq" path="res://music/brams-vengerskijj-tanec-5.ogg" id="1_iigr4"]
+[ext_resource type="Script" uid="uid://i52vn2xyu70c" path="res://data/gesture_event.gd" id="1_xc8ed"]
+[ext_resource type="Script" uid="uid://clcrl75wkk06j" path="res://data/song_data.gd" id="2_iigr4"]
+[ext_resource type="Script" uid="uid://u3dkxknc6uwr" path="res://data/tempo_marker.gd" id="3_66esq"]
+
+[sub_resource type="Resource" id="GestureEvent_1"]
+script = ExtResource("1_xc8ed")
+time_sec = 3.0
+window_sec = 0.4
+metadata/_custom_type_script = "uid://i52vn2xyu70c"
+
+[sub_resource type="Resource" id="GestureEvent_2"]
+script = ExtResource("1_xc8ed")
+time_sec = 8.0
+window_sec = 0.4
+gesture = "PALM"
+metadata/_custom_type_script = "uid://i52vn2xyu70c"
+
+[sub_resource type="Resource" id="TempoMarker_1"]
+script = ExtResource("3_66esq")
+bpm = 70.0
+metadata/_custom_type_script = "uid://u3dkxknc6uwr"
+
+[sub_resource type="Resource" id="TempoMarker_2"]
+script = ExtResource("3_66esq")
+time_sec = 15.0
+bpm = 50.0
+metadata/_custom_type_script = "uid://u3dkxknc6uwr"
+
+[resource]
+script = ExtResource("2_iigr4")
+audio_file = ExtResource("1_iigr4")
+tempo_map = Array[ExtResource("3_66esq")]([SubResource("TempoMarker_1"), SubResource("TempoMarker_2")])
+gestures = Array[ExtResource("1_xc8ed")]([SubResource("GestureEvent_1"), SubResource("GestureEvent_2")])
+metadata/_custom_type_script = "uid://clcrl75wkk06j"

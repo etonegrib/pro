@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bm3hkmjnnp034"]
+
+[ext_resource type="Texture2D" uid="uid://x4mq4eh5hgdu" path="res://bochka (2).png" id="1_l7sjf"]
+
+[node name="Musician" type="Node2D" unique_id=1298588590]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2081249042]
+position = Vector2(121.00006, -116.99997)
+scale = Vector2(3.671875, 3.59375)
+texture = ExtResource("1_l7sjf")
